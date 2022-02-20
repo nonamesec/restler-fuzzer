@@ -315,6 +315,9 @@ module SwaggerVisitors =
                     sprintf "Property name: %A, parent properties: %s" propertyName parentPropertyNames
                 failwith (sprintf "%s %s" message propertyInfo)
 
+            let escapedPropertyName:string = ""
+            if (propertyName.Contains("[") || propertyName.Contains("]") || propertyName.Contains("$") || propertyName.Contains(".")) then escapedPropertyName = "['" + propertyName + "']"
+            else escapedPropertyName = propertyName
             let pv, includeProperty =
                 match exampleObj with
                 | Some ex ->
@@ -328,7 +331,7 @@ module SwaggerVisitors =
                         | NJsonSchema.JsonObjectType.Number
                         | NJsonSchema.JsonObjectType.Integer
                         | NJsonSchema.JsonObjectType.Boolean ->
-                            ex.SelectToken(propertyName)
+                            ex.SelectToken(escapedPropertyName)
                         | _ -> failwith "extractpropertyfromobject: invalid usage"
                     if isNull exampleValue then
                         // If the example is not found, ignore the property

@@ -111,7 +111,10 @@ type ApiResource(requestId:RequestId,
             br.name
         | HeaderResource hr ->
             hr
-
+    // do  
+    //     resourceName = if resourceName.Equals("_") then "'" + resourceName + "'" else resourceName
+        
+        
     let isNestedBodyResource =
         match resourceReference with
         | PathResource pr ->
@@ -172,14 +175,16 @@ type ApiResource(requestId:RequestId,
         // Infer the convention if it is not already set.
         // Each name (e.g. container vs. resource names) may have a different convention.
         // For example: the-accounts/{the_account_id}
+        let cleanName = if name.Equals("_") then "'" + name + "'" else  name
         let typeNamingConvention =
             match namingConvention with
-            | None -> getConvention name
+            | None -> getConvention cleanName
             | Some c -> c
         let nameRegexSplit = RegexSplitMap.[typeNamingConvention]
-        nameRegexSplit.Split(name)
+        nameRegexSplit.Split(cleanName)
         |> Array.filter (fun x -> not (String.IsNullOrEmpty x))
 
+    
     let resourceNameWords = getTypeWords resourceName
 
     /// Gets the candidate type names for this resource, based on its container.
@@ -188,6 +193,8 @@ type ApiResource(requestId:RequestId,
     /// Note: this function normalizes the original identifier names after splitting the names
     /// based on naming convention.  Make sure producer-consumer inference
     /// uses only the normalized type names.
+    
+    
     let getCandidateTypeNames() =
         let normalizedSeparator = "__"
         // Candidate types based on the container
@@ -227,7 +234,7 @@ type ApiResource(requestId:RequestId,
     let candidateTypeNames = getCandidateTypeNames() |> List.map (fun x -> x.ToLower())
 
     let typeName = candidateTypeNames |> List.head
-
+    
     /// The request ID in which this resource is declared in the API spec
     member x.RequestId = requestId
 
@@ -283,7 +290,10 @@ type ApiResource(requestId:RequestId,
     // Gets the variable name that should be present in the response
     // Example: /api/accounts/{accountId}
     //   * the var name is "Id" --> "id"
+
     member x.ProducerParameterName =
+        // printfn "hereee %A" resourceNameWords
+        // printfn "from this %A" resourceName
         let p = resourceNameWords |> Array.last
         p.ToLower()
 
