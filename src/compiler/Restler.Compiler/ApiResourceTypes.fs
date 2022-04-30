@@ -158,7 +158,7 @@ type ApiResource(requestId:RequestId,
         let hasHyphens = str.Contains("-")
         let startsWithUpper = false
         
-        if str.length > 0 then
+        if str.Length > 0 then
             startsWithUpper = Char.IsUpper(str.[0])
         else
             startsWithUpper = false
