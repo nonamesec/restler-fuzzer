@@ -156,7 +156,10 @@ type ApiResource(requestId:RequestId,
         let hasLower = str |> Seq.exists (fun x -> Char.IsLower x)
         let hasUnderscores = str.Contains("_")
         let hasHyphens = str.Contains("-")
-        let startsWithUpper = Char.IsUpper(str.[0])
+        let startsWithUpper = false
+        
+        if str.length > 0 then
+            startsWithUpper = Char.IsUpper(str.[0])
 
         if hasUpper && hasLower then
             if startsWithUpper then
