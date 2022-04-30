@@ -160,6 +160,8 @@ type ApiResource(requestId:RequestId,
         
         if str.length > 0 then
             startsWithUpper = Char.IsUpper(str.[0])
+        else
+            startsWithUpper = false
 
         if hasUpper && hasLower then
             if startsWithUpper then
